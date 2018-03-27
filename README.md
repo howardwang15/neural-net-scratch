@@ -1,1 +1,1 @@
-# Neural-net-scratch
+A 2 layer neural network built completely from scratch using Python that can be used to classify images from the MNIST dataset
