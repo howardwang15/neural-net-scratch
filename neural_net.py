@@ -22,6 +22,16 @@ index = random.randrange(0, len(images) - 5000)
 pic = images[index]
 
 
+def one_hot_encoding(label):
+    encoded = []
+    for i in range(10):
+        if label == i:
+            encoded.append(1)
+        else:
+            encoded.append(0)
+    return encoded
+
+
 def sigmoid(x):
     return 1.0/(1 + np.exp(-x))
 
@@ -39,27 +49,51 @@ def create_bias(output_size):
     return a
 
 
+def cross_entropy_loss(pred, actual):
+    return -np.mean(actual * np.log(pred)/np.log(10))
+
+
 def mean_squared_error(pred, actual):
-    return (pred - actual)**2
+    return np.mean((pred - actual)**2)
 
 
-def create_model(inputs):
-    w1 = create_weights(n_pixels, hidden_layer1_neurons)
-    b1 = create_bias(hidden_layer1_neurons)
+class Model:
+    def __init__(self, inputs):
+        self.w1 = create_weights(n_pixels, hidden_layer1_neurons)
+        self.b1 = create_bias(hidden_layer1_neurons)
 
-    w2 = create_weights(hidden_layer1_neurons, hidden_layer2_neurons)
-    b2 = create_bias(hidden_layer2_neurons)
+        self.w2 = create_weights(hidden_layer1_neurons, hidden_layer2_neurons)
+        self.b2 = create_bias(hidden_layer2_neurons)
 
-   # w3 =
-    h1 = np.dot(inputs, w1) + b1
+        self.w3 = create_weights(hidden_layer2_neurons, n_classes)
+        self.b3 = create_bias(n_classes)
+
+        self.h1 = np.dot(inputs, self.w1) + self.b1
+        self.h1 = sigmoid(self.h1)
+
+        self.h2 = np.dot(self.h1, self.w2) + self.b2
+        self.h2 = sigmoid(self.h2)
+
+        self.output = np.dot(self.h2, self.w3) + self.b3
 
 
+images = np.asarray(images)
+model = Model(images)
 
 
 for i in range(n_epochs):
-    for i in range(0, len(images)):
-        if i % batch_size == 0:
-            print("hl")
+    train_batch = []
+    batch_labels = []
+    for j in range(batch_size):
+        random_num = random.randrange(0, images.shape[0])
+        train_batch.append(images[random_num])
+        batch_labels.append(labels[random_num])
 
-
-#print(b)
+    train_batch = np.asarray(train_batch)
+    batch_labels = np.asarray(batch_labels)
+    for j in range(len(train_batch)):
+        one_hot_label = np.asarray(one_hot_encoding(batch_labels[j]))
+        error = cross_entropy_loss(model.output, one_hot_label)
+        print(error)
+        if j % batch_size == 0:
+            print("hi")
