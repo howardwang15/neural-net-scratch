@@ -16,13 +16,9 @@ n_epochs = 5000
 
 #read mnist data
 mndata = MNIST('C:\\Users\\joy_l\\PycharmProjects\\MNIST_data')
-images, labels = mndata.load_training()
-index = random.randrange(0, len(images) - 5000)
+images, labels = mndata.load_training() #load the training data
 
-pic = images[index]
-
-
-def one_hot_encoding(label):
+def one_hot_encoding(label): #convert a label (ie 0-9 digit into a one hot encoded vector)
     encoded = []
     for i in range(10):
         if label == i:
@@ -32,16 +28,20 @@ def one_hot_encoding(label):
     return encoded
 
 
-def sigmoid(x):
+def sigmoid(x): #sigmoid activation function
     return 1.0/(1 + np.exp(-x))
 
 
+def softmax(x):
+    a = []
+    for i in x:
+      a.append(np.exp(i)/float(np.sum(np.exp(x))))
+    return np.asarray(a)
+
+
 def create_weights(input_size, output_size):
-    a = np.empty([input_size, output_size])
-    for i in range(0, output_size):
-        weight = random.uniform(-0.5, 0.5)
-        np.append(a, weight)
-    return a
+    w = np.asarray(np.random.rand(input_size, output_size) - 0.5)
+    return w
 
 
 def create_bias(output_size):
@@ -50,6 +50,10 @@ def create_bias(output_size):
 
 
 def cross_entropy_loss(pred, actual):
+    pred = pred.tolist()
+    for i in pred:
+        if i == 0:
+            print("WHY")
     return -np.mean(actual * np.log(pred)/np.log(10))
 
 
@@ -75,6 +79,8 @@ class Model:
         self.h2 = sigmoid(self.h2)
 
         self.output = np.dot(self.h2, self.w3) + self.b3
+        self.output = sigmoid(self.output)
+        print(self.output)
 
 
 images = np.asarray(images)
@@ -93,7 +99,8 @@ for i in range(n_epochs):
     batch_labels = np.asarray(batch_labels)
     for j in range(len(train_batch)):
         one_hot_label = np.asarray(one_hot_encoding(batch_labels[j]))
-        error = cross_entropy_loss(model.output, one_hot_label)
-        print(error)
+        error = cross_entropy_loss(softmax(model.output), one_hot_label)
+        #print(error)
         if j % batch_size == 0:
-            print("hi")
+            break
+            #print("hi")
