@@ -28,6 +28,10 @@ def one_hot_encoding(label): #convert a label (ie 0-9 digit into a one hot encod
     return encoded
 
 
+def sigmoid_prime(x):
+    return  x * (1.0 - x)
+
+
 def sigmoid(x): #sigmoid activation function
     return 1.0/(1 + np.exp(-x))
 
@@ -64,6 +68,9 @@ def cross_entropy_loss(pred, actual):
     return np.mean(losses)
 
 
+def get_gradients(prediction, actual):
+
+
 class Model:
     def __init__(self):
         self.w1 = create_weights(n_pixels, hidden_layer1_neurons)
@@ -89,6 +96,9 @@ class Model:
         return self.output
 
 
+    def update_model(self, error):
+        self.w3 = learning_rate
+
 
 images = np.asarray(images)
 
@@ -103,8 +113,8 @@ prediction = Model()
 
 for i in range(n_epochs): #train for specified num of epochs
     output = prediction.predict(train_batch)
-
     loss = cross_entropy_loss(output, batch_labels)
+    prediction.update_model(loss)
     assert(len(train_batch) == len(batch_labels))
 
 
