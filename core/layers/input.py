@@ -1,4 +1,4 @@
-from layers import Layer
+from .layer import Layer
 
 class Input(Layer):
   def __init__(self, shape, **kwargs):
