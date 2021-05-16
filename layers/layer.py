@@ -6,5 +6,8 @@ class Layer:
   def name(self):
     return self._name
 
-  def forward(self):
+  def forward(self, inputs):
+    pass
+
+  def backprop(self):
     pass
