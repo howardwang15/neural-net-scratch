@@ -7,7 +7,7 @@ class Layer:
   def forward(self, inputs):
     pass
 
-  def backprop(self):
+  def backprop(self, error):
     pass
 
   def _validate(self, inputs):
